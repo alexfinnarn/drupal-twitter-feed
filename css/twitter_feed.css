@@ -1,0 +1,17 @@
+/**
+ * Styling for Twitter Feed block
+ */
+
+.block-twitter-feed ul {
+    list-style: none;
+    padding-left: 0px;
+}
+
+.block-twitter-feed li {
+    font-size: 0.9em;
+}
+
+.block-twitter-feed .tweet-date {
+    font-size: 0.9em;
+    padding-left: 0.5em;
+}

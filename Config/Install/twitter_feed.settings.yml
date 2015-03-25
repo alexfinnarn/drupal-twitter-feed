@@ -1,0 +1,5 @@
+twitter_api_key: ''
+twitter_secret_key: ''
+twitter_access_api_key: ''
+twitter_access_secret_key: ''
+max_tweets: 10

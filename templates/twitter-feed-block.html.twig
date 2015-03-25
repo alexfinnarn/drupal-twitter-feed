@@ -1,0 +1,23 @@
+{#
+/**
+ * @file
+ * Theme for Twitter Feed module's block.
+ *
+ * Available variables:
+ * - username: Twitter username for block
+ * - tweets: A list of tweets
+ *
+ * @ingroup themeable
+ */
+#}
+<h3>{{ 'Tweets for !username'|t({ '!username': username }) }}</h3>
+<ul>
+    {% for tweet in tweets %}
+        <li>
+            {{ tweet.text|raw }}
+            <br/>
+            <span class="tweet-date"> - {{ tweet.created_at|date("M dS Y") }}</span>
+        </li>
+        <hr/>
+    {% endfor %}
+</ul>

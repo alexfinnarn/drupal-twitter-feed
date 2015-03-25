@@ -1,0 +1,8 @@
+name: Twitter Feed
+type: module
+description: A module to display my Twitter feed in a block.
+package: Finn
+core: 8.x
+configure: twitter_feed.settings
+dependencies:
+  - block

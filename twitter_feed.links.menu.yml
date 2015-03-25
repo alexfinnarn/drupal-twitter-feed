@@ -1,0 +1,5 @@
+twitter_feed.settings:
+  title: 'Twitter Feed'
+  parent: system.admin_config_media
+  route_name: twitter_feed.settings
+  description: 'Configure the Twitter Feed module.'

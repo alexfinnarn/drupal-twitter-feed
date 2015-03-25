@@ -1,0 +1,17 @@
+<?php
+/**
+* @file
+* Provides hooks for Twitter Feed module.
+*/
+
+/**
+ *  Implements hook_theme().
+ */
+function twitter_feed_theme($existing, $type, $theme, $path) {
+  return array(
+    'twitter_feed_block' => array(
+      'variables' => array('username' => NULL, 'tweets' => NULL),
+      'template' => 'twitter-feed-block',
+    )
+  );
+}
