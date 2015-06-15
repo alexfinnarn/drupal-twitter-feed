@@ -1,0 +1,6 @@
+{
+  "name": "drupal/twitter_feed",
+  "description": "A Twitter feed in block module for Drupal 8.",
+  "type": "drupal-module",
+  "license": "MIT"
+}
