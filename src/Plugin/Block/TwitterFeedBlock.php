@@ -125,7 +125,7 @@ class TwitterFeedBlock extends BlockBase implements ContainerFactoryPluginInterf
     }
 
     // Make username a URL to Twitter account.
-    $username = '<a href="http://www.twitter.com/' . $this->configuration['username'] . '">@' . $this->configuration['username'] . '</a>';
+    $username = '<a href="http://www.twitter.com/' . $this->configuration['username'] . '" target="_blank">@' . $this->configuration['username'] . '</a>';
 
     return array(
       '#theme' => 'twitter_feed_block',
