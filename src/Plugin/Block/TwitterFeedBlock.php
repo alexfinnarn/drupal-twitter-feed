@@ -12,6 +12,8 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Component\Datetime\TimeInterface;
 
 /**
  * Provides a generic Menu block.
@@ -25,11 +27,30 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class TwitterFeedBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
   /**
+   * The Twitter CID.
+   */
+  const TWITTER_CID = 'drupal_twitter_feed_tweets';
+
+  /**
    * Stores the configuration factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
+
+  /**
+   * Stores the cache backend.
+   *
+   * @var \Drupal\Core\Cache\CacheBackendInterface
+   */
+  protected $cache;
+
+  /**
+   * Stores the time backend.
+   *
+   * @var \Drupal\Core\Cache\CacheBackendInterface
+   */
+  protected $time;
 
   /**
    * Creates a TwitterFeedBlock instance.
@@ -42,10 +63,16 @@ class TwitterFeedBlock extends BlockBase implements ContainerFactoryPluginInterf
    *   The plugin implementation definition.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
+   * @param \Drupal\Core\Cache\CacheBackendInterface $cache
+   *   The caching backend.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   Drupal DateTime service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory, CacheBackendInterface $cache, TimeInterface $time) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->configFactory = $config_factory;
+    $this->cache = $cache;
+    $this->time = $time;
   }
 
   /**
@@ -56,7 +83,9 @@ class TwitterFeedBlock extends BlockBase implements ContainerFactoryPluginInterf
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('cache.data'),
+      $container->get('datetime.time')
     );
   }
 
@@ -113,9 +142,14 @@ class TwitterFeedBlock extends BlockBase implements ContainerFactoryPluginInterf
    * {@inheritdoc}
    */
   public function build() {
-
-    // Get tweets
-    $tweets = $this->getBearerToken()->performRequest();
+    $tweets = [];
+    if ($cache = $this->cache->get(SELF::TWITTER_CID)) {
+      $tweets = $cache->data['tweets'];
+    } else {
+      // Get tweets
+      $tweets = $this->getBearerToken()->performRequest();
+      $this->cache->set(self::TWITTER_CID, ['tweets' => $tweets], $this->time->getRequestTime() + (1800));
+    }
 
     // Grab text and created at
     $tweets_text = array();
@@ -137,6 +171,13 @@ class TwitterFeedBlock extends BlockBase implements ContainerFactoryPluginInterf
         ),
       ),
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheMaxAge() {
+    return 0;
   }
 
   private function getBearerToken() {
